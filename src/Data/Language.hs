@@ -5,6 +5,7 @@ module Data.Language
   , extensionsForLanguage
   , knownLanguage
   , languageForFilePath
+  , languageForPath
   , pathIsMinified
   , supportedExts
   , codeNavLanguages
@@ -21,6 +22,8 @@ import qualified Data.Text as T
 import qualified Data.Map.Strict as Map
 import           Prologue
 import           System.FilePath.Posix
+import qualified System.Path as Path
+import qualified System.Path.PartClass as Path.Class
 
 -- | The various languages we support.
 -- Please do not reorder any of the field names: the current implementation of 'Primitive'
@@ -102,6 +105,9 @@ languageForFilePath path =
   in case filter (not . spurious) allResults of
     [result] -> textToLanguage result
     _        -> Unknown
+
+languageForPath :: Path.Class.AbsRel ar => Path.File ar -> Language
+languageForPath = languageForFilePath . Path.toString
 
 supportedExts :: [String]
 supportedExts = foldr append mempty supportedLanguages
